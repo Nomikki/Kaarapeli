@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
   public float movementSpeed = 5.0f;
   public float mouseSensitivity = 1.0f;
   public float jumpForce = 5.0f;
+  public bool isDriving = false;
 
   Camera cam;
   Rigidbody body;
@@ -60,6 +61,9 @@ public class PlayerController : MonoBehaviour
     lookAt.y += mouseX;
     lookAt.x += mouseY;
 
+    lookAt.x = Mathf.Clamp(lookAt.x, -80, 80);
+    lookAt.y = Mathf.Repeat(lookAt.y, 360);
+
     transform.rotation = Quaternion.Euler(0, lookAt.y, 0);
     cam.transform.rotation = Quaternion.Euler(lookAt.x, lookAt.y, 0);
   }
@@ -67,7 +71,10 @@ public class PlayerController : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-    HandleRotations();
-    HandleMovement();
+    if (!isDriving)
+    {
+      HandleRotations();
+      HandleMovement();
+    }
   }
 }
