@@ -6,7 +6,8 @@ public class PlayerController : MonoBehaviour
 {
   public float movementSpeed = 5.0f;
   public float mouseSensitivity = 1.0f;
-  
+  public float jumpForce = 5.0f;
+
   Camera cam;
   Rigidbody body;
   Vector2 lookAt;
@@ -16,6 +17,15 @@ public class PlayerController : MonoBehaviour
   {
     body = GetComponent<Rigidbody>();
     cam = Camera.main;
+  }
+
+  bool IsTouchingGround()
+  {
+    RaycastHit hitInfo;
+
+    if (Physics.Raycast(body.position, Vector3.down, out hitInfo, 0.95f))
+      return true;
+    return false;
   }
 
   void HandleMovement()
@@ -31,10 +41,19 @@ public class PlayerController : MonoBehaviour
     velocity *= movementSpeed;
 
     velocity.y = body.velocity.y;
+
+
+    if (Input.GetAxis("Jump") > 0)
+    {
+      if (IsTouchingGround())
+        velocity.y = jumpForce;
+    }
+
     body.velocity = velocity;
   }
 
-  void HandleRotations() {
+  void HandleRotations()
+  {
     float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
     float mouseY = -Input.GetAxis("Mouse Y") * mouseSensitivity;
 
