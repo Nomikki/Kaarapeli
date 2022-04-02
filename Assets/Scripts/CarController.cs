@@ -9,32 +9,24 @@ public class CarController : MonoBehaviour
   public List<AxleInfo> axleInfos;
   PlayerController player;
   Camera cam;
+  bool controlThis = false;
 
   // Start is called before the first frame update
   void Start()
   {
     cam = Camera.main;
-    cam.transform.SetParent(null);
+    //cam.transform.SetParent(null);
     player = GameObject.Find("Player").GetComponent<PlayerController>();
-    
-
   }
 
   // Update is called once per frame
   void Update()
   {
-    Vector3 offset = new Vector3(0, 2, 0);
-    cam.transform.position += ((transform.position + offset) - cam.transform.position) * 0.01f;
-    cam.transform.LookAt(transform.position + (transform.forward * 4.0f), Vector3.up);
-
-    if (player.isDriving) {
-      if (Input.GetAxis("Fire1") > 0)
-      {
-          cam.transform.position = player.transform.position;
-          player.isDriving = false;
-      }
+    if (controlThis) {
+      Vector3 offset = new Vector3(0, 2, 0);
+      cam.transform.position += ((transform.position + offset) - cam.transform.position) * 0.01f;
+      cam.transform.LookAt(transform.position + (transform.forward * 4.0f), Vector3.up);
     }
-
   }
 
   public void ApplyLocalPosition(WheelCollider collider)
@@ -54,8 +46,14 @@ public class CarController : MonoBehaviour
 
   void FixedUpdate()
   {
-    float motor = Input.GetAxis("Vertical") * maxMotorTorque;
-    float steering = Input.GetAxis("Horizontal") * maxSteeringAngle;
+    float motor = 0;
+    float steering = 0;
+
+    if (controlThis)
+    {
+      motor = Input.GetAxis("Vertical") * maxMotorTorque;
+      steering = Input.GetAxis("Horizontal") * maxSteeringAngle;
+    }
 
     foreach (AxleInfo axleinfo in axleInfos)
     {
@@ -74,6 +72,15 @@ public class CarController : MonoBehaviour
       ApplyLocalPosition(axleinfo.leftWheel);
       ApplyLocalPosition(axleinfo.rightWheel);
     }
+  }
+
+  public void startDrive() {
+    controlThis = true;
+    cam.transform.SetParent(null);
+  }
+
+  public void stopDrive() {
+    controlThis = false;
   }
 }
 

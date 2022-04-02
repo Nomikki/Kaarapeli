@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
   Camera cam;
   Rigidbody body;
   Vector2 lookAt;
+  CarController ourCar;
 
   // Start is called before the first frame update
   void Start()
@@ -68,6 +69,37 @@ public class PlayerController : MonoBehaviour
     cam.transform.rotation = Quaternion.Euler(lookAt.x, lookAt.y, 0);
   }
 
+  void HandleActivation()
+  {
+    if (Input.GetMouseButtonDown(0))
+    {
+      if (!isDriving)
+      {
+        RaycastHit hitInfo;
+        if (Physics.Raycast(body.position, transform.forward, out hitInfo, 2.0f))
+        {
+          Debug.Log("Collide with " + hitInfo.collider.name);
+          if (hitInfo.collider.name == "carBody")
+          {
+            //a bit ugly /o\
+            ourCar = hitInfo.collider.transform.parent.GetComponent<CarController>();
+            ourCar.startDrive();
+            isDriving = true;
+          }
+        }
+      }
+      else
+      {
+        isDriving = false;
+        ourCar.stopDrive();
+        body.position = ourCar.transform.position;
+        ourCar = null;
+        cam.transform.SetParent(this.transform);
+        cam.transform.localPosition = new Vector3(0, 0.7f, 0);
+      }
+    }
+  }
+
   // Update is called once per frame
   void Update()
   {
@@ -76,5 +108,7 @@ public class PlayerController : MonoBehaviour
       HandleRotations();
       HandleMovement();
     }
+
+    HandleActivation();
   }
 }
