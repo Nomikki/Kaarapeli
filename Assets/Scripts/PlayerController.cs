@@ -109,16 +109,17 @@ public class PlayerController : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-  }
-
-  void FixedUpdate()
-  {
-    if (!isDriving)
+     if (!isDriving)
     {
       HandleRotations();
       HandleMovement();
     }
 
     HandleActivation();
+  }
+
+  void FixedUpdate()
+  {
+   
   }
 }
