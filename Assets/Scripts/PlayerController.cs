@@ -19,6 +19,9 @@ public class PlayerController : MonoBehaviour
   {
     body = GetComponent<Rigidbody>();
     cam = Camera.main;
+
+    Cursor.lockState = CursorLockMode.Locked;
+    Cursor.visible = false;
   }
 
   bool IsTouchingGround()
