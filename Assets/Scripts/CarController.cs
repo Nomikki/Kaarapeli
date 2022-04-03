@@ -15,14 +15,14 @@ public class CarController : MonoBehaviour
   void Start()
   {
     cam = Camera.main;
-    //cam.transform.SetParent(null);
     player = GameObject.Find("Player").GetComponent<PlayerController>();
   }
 
   // Update is called once per frame
   void Update()
   {
-    if (controlThis) {
+    if (controlThis)
+    {
       Vector3 offset = new Vector3(0, 2, 0);
       cam.transform.position += ((transform.position + offset) - cam.transform.position) * 0.01f;
       cam.transform.LookAt(transform.position + (transform.forward * 4.0f), Vector3.up);
@@ -74,12 +74,14 @@ public class CarController : MonoBehaviour
     }
   }
 
-  public void startDrive() {
+  public void startDrive()
+  {
     controlThis = true;
     cam.transform.SetParent(null);
   }
 
-  public void stopDrive() {
+  public void stopDrive()
+  {
     controlThis = false;
   }
 }

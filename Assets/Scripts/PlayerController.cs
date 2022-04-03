@@ -23,11 +23,7 @@ public class PlayerController : MonoBehaviour
 
   bool IsTouchingGround()
   {
-    RaycastHit hitInfo;
-
-    if (Physics.Raycast(body.position, Vector3.down, out hitInfo, 0.95f))
-      return true;
-    return false;
+    return Physics.Raycast(body.position, Vector3.down, 0.95f);
   }
 
   void HandleMovement()
@@ -39,19 +35,20 @@ public class PlayerController : MonoBehaviour
 
     velocity = transform.forward * vert + transform.right * hori;
     velocity = Vector3.ClampMagnitude(velocity, 1.0f);
-
     velocity *= movementSpeed;
-
     velocity.y = body.velocity.y;
 
 
-    if (Input.GetAxis("Jump") > 0)
+    if (IsTouchingGround())
     {
-      if (IsTouchingGround())
-        velocity.y = jumpForce;
-    }
 
-    body.velocity = velocity;
+      if (Input.GetAxis("Jump") > 0)
+      {
+        velocity.y = jumpForce;
+      }
+
+      body.velocity = velocity;
+    }
   }
 
   void HandleRotations()
@@ -78,13 +75,16 @@ public class PlayerController : MonoBehaviour
         RaycastHit hitInfo;
         if (Physics.Raycast(body.position, transform.forward, out hitInfo, 2.0f))
         {
-          Debug.Log("Collide with " + hitInfo.collider.name);
+          //Debug.Log("Collide with " + hitInfo.collider.name);
           if (hitInfo.collider.name == "carBody")
           {
             //a bit ugly /o\
             ourCar = hitInfo.collider.transform.parent.GetComponent<CarController>();
             ourCar.startDrive();
             isDriving = true;
+            
+            body.isKinematic = true;
+            body.detectCollisions = false;
           }
         }
       }
@@ -92,7 +92,10 @@ public class PlayerController : MonoBehaviour
       {
         isDriving = false;
         ourCar.stopDrive();
-        body.position = ourCar.transform.position;
+        //Need check is there any space?
+        body.detectCollisions = true;
+        body.isKinematic = false;
+        body.position = ourCar.transform.position - (ourCar.transform.right*1.5f);
         ourCar = null;
         cam.transform.SetParent(this.transform);
         cam.transform.localPosition = new Vector3(0, 0.7f, 0);
@@ -102,6 +105,10 @@ public class PlayerController : MonoBehaviour
 
   // Update is called once per frame
   void Update()
+  {
+  }
+
+  void FixedUpdate()
   {
     if (!isDriving)
     {
